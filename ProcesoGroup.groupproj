@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{CA5CDD9C-01A2-4574-9664-6B7196F0D909}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Server\ProcesoServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Client\ProcesoClient.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ProcesoServer">
+        <MSBuild Projects="Server\ProcesoServer.dproj"/>
+    </Target>
+    <Target Name="ProcesoServer:Clean">
+        <MSBuild Projects="Server\ProcesoServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProcesoServer:Make">
+        <MSBuild Projects="Server\ProcesoServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProcesoClient">
+        <MSBuild Projects="Client\ProcesoClient.dproj"/>
+    </Target>
+    <Target Name="ProcesoClient:Clean">
+        <MSBuild Projects="Client\ProcesoClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProcesoClient:Make">
+        <MSBuild Projects="Client\ProcesoClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ProcesoServer;ProcesoClient"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ProcesoServer:Clean;ProcesoClient:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ProcesoServer:Make;ProcesoClient:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
