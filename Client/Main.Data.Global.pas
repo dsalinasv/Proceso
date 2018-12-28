@@ -9,7 +9,7 @@ uses
   dxSkinOffice2013White, dxSkinsForm, DXC.UC.DataConnector, UUCMidasConn,
   DXC.UC.UserControl, System.Actions, Vcl.ActnList,
   Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, Datasnap.DSCommon,
-  IPPeerClient;
+  IPPeerClient, cxEdit, cxEditRepositoryItems;
 
 type
   TCallback = class(TDBXCallback)
@@ -28,25 +28,34 @@ type
     actChange: TAction;
     actUsers: TAction;
     UserControl: TUserControl;
-    actCaptura: TAction;
+    actEtapa: TAction;
     cdsCaptura: TClientDataSet;
     cccManager: TDSClientCallbackChannelManager;
     actAlmacen: TAction;
     dspAlmacen: TDSProviderConnection;
     cdsAlmacen: TClientDataSet;
+    dspEtapa: TDSProviderConnection;
+    cdsEtapa: TClientDataSet;
+    actCaptura: TAction;
+    actCapturaConsult: TAction;
     procedure actExecute(Sender: TObject);
+    procedure actExecuteModal(Sender: TObject);
     procedure DataModuleCreate(Sender: TObject);
     procedure UserControlLoginSuccess(ASender: TObject;
       ACurrentUser: TCurrentUser);
   private
     FCallbackName: String;
-  public
-    IdUser: Integer;
-    IdAccount: String;
-    UserName: String;
-    procedure Broadcast;
+    function FormName(Sender: TObject): String;
+    procedure LoadAccess(cds: TClientDataSet);
     procedure CloseSplash;
     procedure ShowSplash;
+  public
+    IdUser: Integer;
+    UserName: String;
+    Etapas: Integer;
+    procedure Broadcast;
+    function Etapa(var sName, sDescripcion, sContenedor: String): boolean;
+    function EsFinal: boolean;
     function GetGuid: string;
     function CheckCode(sCode, sTable: string): boolean;
     function CheckFolio(iFolio: integer; sTable: string): boolean;
@@ -63,14 +72,26 @@ implementation
 
 {$R *.dfm}
 
-uses DSSession, DSProxy, System.DateUtils, System.UiTypes, dxCore, Main.Form.Splash, Main.Form.Menu;
+uses
+  DSSession, DSProxy, System.DateUtils, System.UiTypes, dxCore,
+  Main.Form.Splash, Main.Form.Menu, Module.Form.Captura;
 
 const
   CONFIG = 'config.ini';
 
+function TdmGlobal.FormName(Sender: TObject): String;
+begin
+  Result:= StringReplace((Sender as TComponent).Name, 'act' , 'frm',[]);
+end;
+
 procedure TdmGlobal.actExecute(Sender: TObject);
 begin
-  frmMain.OpenForm(StringReplace((Sender as TComponent).Name, 'act' , 'frm',[]));
+  frmMain.OpenForm(FormName(Sender));
+end;
+
+procedure TdmGlobal.actExecuteModal(Sender: TObject);
+begin
+  frmMain.OpenModalForm(FormName(Sender));
 end;
 
 procedure TdmGlobal.ShowSplash;
@@ -83,8 +104,15 @@ end;
 procedure TdmGlobal.UserControlLoginSuccess(ASender: TObject;
   ACurrentUser: TCurrentUser);
 begin
+  UserControl.AllowableAdditionalObjectsCollection.Clear;
+  LoadAccess(cdsAlmacen);
+  LoadAccess(cdsEtapa);
   idUser:= ACurrentUser.Id;
   UserName:= ACurrentUser.UserName;
+  Etapas:= cdsEtapa.RecordCount;
+  cdsCaptura.Close;
+  cdsCaptura.ParamByName('USERID').AsInteger:= idUser;
+  cdsCaptura.Open;
 end;
 
 procedure TdmGlobal.DataModuleCreate(Sender: TObject);
@@ -95,22 +123,35 @@ begin
   cntData.DriverName:= 'DataSnap';
   if FileExists(CONFIG) then
     cntData.LoadParamsFromIniFile(CONFIG);
-  cntData.Params.Values['DSAuthenticationUser']:= 'promaharin';
-  cntData.Params.Values['DSAuthenticationPassword']:= 'auofdsbcs';
+  cntData.Params.Values['DSAuthenticationUser']:= 'proceso';
+  cntData.Params.Values['DSAuthenticationPassword']:= 'etapas';
   cntData.Open;
-  cdsAlmacen.Open;
-  cdsCaptura.Open;
   cccManager.ManagerId :=
     TDSTunnelSession.GenerateSessionId;
- cccManager.DSHostname:= cntData.Params.Values['HostName'];
-  FCallbackName :=
-    TDSTunnelSession.GenerateSessionId;
+  cccManager.DSHostname:= cntData.Params.Values['HostName'];
+  cccManager.UserName:= cntData.Params.Values['DSAuthenticationUser'];
+  cccManager.Password:= cntData.Params.Values['DSAuthenticationPassword'];
+  FCallbackName:= TDSTunnelSession.GenerateSessionId;
   cccManager.RegisterCallback(
     FCallbackName,
     TCallback.Create
   );
   CloseSplash;
   UserControl.Execute;
+end;
+
+function TdmGlobal.EsFinal: boolean;
+begin
+  Exit(cdsCaptura.FieldByName('ETAPA').AsInteger = Etapas);
+end;
+
+function TdmGlobal.Etapa(var sName, sDescripcion, sContenedor: String): boolean;
+begin
+  cdsEtapa.Locate('IDETAPA', cdsCaptura.FieldByName('ETAPA').AsString, []);
+  sName:= cdsEtapa.FieldByName('NAME').AsString;
+  sDescripcion:= cdsEtapa.FieldByName('DESCRIPCION').AsString;
+  sContenedor:= cdsEtapa.FieldByName('CONTENEDOR').AsString;
+  Exit(cdsEtapa.FieldByName('ADJUNTAR').AsInteger = 1);
 end;
 
 function TdmGlobal.FirstDayOfMonth(Date: TDateTime): TDateTime;
@@ -130,13 +171,31 @@ begin
 end;
 
 
+procedure TdmGlobal.LoadAccess(cds: TClientDataSet);
+begin
+  cds.Close;
+  cds.Open;
+  while not cds.Eof do
+  begin
+    with UserControl.AllowableAdditionalObjectsCollection.Add do
+    begin
+      ObjectName := cds.FieldByName('NAME').AsString;
+      Description := cds.FieldByName('DESCRIPCION').AsString;
+      ContainerName := cds.FieldByName('CONTENEDOR').AsString;
+      GroupName := cds.FieldByName('GRUPO').AsString;
+    end;
+    cds.Next;
+  end;
+end;
+
 function TdmGlobal.GetGuid: string;
 begin
   Exit(dxGenerateGUID);
 end;
 
 procedure TdmGlobal.Broadcast;
-var AClient: TDSAdminClient;
+var
+  AClient: TDSAdminClient;
 begin
   AClient := TDSAdminClient.Create(cntData.DBXConnection);
   try
@@ -186,6 +245,7 @@ begin
       dmGlobal.cdsCaptura.Refresh;
     end
   );
+  Result := TJSONTrue.Create;
 end;
 
 end.

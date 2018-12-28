@@ -82,6 +82,10 @@ inherited frmModule: TfrmModule
     object tabData: TcxTabSheet
       Caption = 'Datos'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lcData: TdxLayoutControl
         Left = 0
         Top = 0

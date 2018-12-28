@@ -1,8 +1,8 @@
 object dmGlobal: TdmGlobal
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 164
-  Width = 288
+  Height = 235
+  Width = 353
   object cntData: TSQLConnection
     ConnectionName = 'DataSnapCONNECTION'
     DriverName = 'DataSnap'
@@ -19,8 +19,8 @@ object dmGlobal: TdmGlobal
       'Port=211'
       'Filters={}'
       'CommunicationProtocol=tcp/ip'
-      'DSAuthenticationPassword=auofdsbcs'
-      'DSAuthenticationUser=promaharin')
+      'DSAuthenticationUser=proceso'
+      'DSAuthenticationPassword=etapas')
     Left = 24
     Top = 16
   end
@@ -111,99 +111,40 @@ object dmGlobal: TdmGlobal
       Category = 'Seguridad'
       Caption = 'Usuarios'
     end
-    object actCaptura: TAction
-      Caption = 'Captura'
+    object actAlmacen: TAction
+      Category = 'Cat'#225'logos'
+      Caption = 'Almacenes'
       OnExecute = actExecute
     end
-    object actAlmacen: TAction
-      Caption = 'Almacenes'
+    object actEtapa: TAction
+      Category = 'Cat'#225'logos'
+      Caption = 'Etapas'
+      OnExecute = actExecute
+    end
+    object actCaptura: TAction
+      Caption = 'Captura'
+      OnExecute = actExecuteModal
+    end
+    object actCapturaConsult: TAction
+      Category = 'Consultas'
+      Caption = 'Cerradas'
       OnExecute = actExecute
     end
   end
   object UserControl: TUserControl
     AdditionalAttributesExplanations = <>
-    AllowableAdditionalObjectsCollection = <
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso1'
-        Description = 'Puede ver el paso 1'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso2'
-        Description = 'Puede ver el paso 2'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso3'
-        Description = 'Puede ver el paso 3'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso4'
-        Description = 'Puede ver el paso 4'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso5'
-        Description = 'Puede ver el paso 5'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso6'
-        Description = 'Puede ver el paso 6'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso7'
-        Description = 'Puede ver el paso 7'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso8'
-        Description = 'Puede ver el paso 8'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso9'
-        Description = 'Puede ver el paso 9'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end
-      item
-        ContainerName = 'Proceso'
-        ObjectName = 'Paso10'
-        Description = 'Puede ver el paso 10'
-        GroupName = 'Proceso'
-        OCN = 'TCustomAction'
-      end>
+    AllowableAdditionalObjectsCollection = <>
     AllowableMainObjectsContainer.ActionManager = ActionManager
     AllowableMainObjectsContainer.HideNotAllowedObjects = True
     AllowableMainObjectsContainer.RequiredActivators.UsersManagerActivator.Action = actUsers
     AllowableMainObjectsContainer.RequiredActivators.ChangePasswordActivator.Action = actChange
     AllowableMainObjectsContainer.RequiredActivators.LogoffActivator.Action = actSession
-    ApplicationId = 'Promaharin'
-    ApplicationName = 'Promaharin'
+    ApplicationId = 'Proceso'
+    ApplicationName = 'Proceso'
     CryptographicOptions.AdditionalHashes = <>
     MainAdminUser.Name = 'Administrador'
     MainAdminUser.UserName = 'admin'
-    MainAdminUser.Password = 'auofdsbcs'
+    MainAdminUser.Password = 'admin'
     MainAdminUser.Email = 'administracion@promaharin.com'
     LoggingSystem.GeneralLogActive = True
     LoggingSystem.UsersLogActive = True
@@ -275,7 +216,12 @@ object dmGlobal: TdmGlobal
   end
   object cdsCaptura: TClientDataSet
     Aggregates = <>
-    Params = <>
+    Params = <
+      item
+        DataType = ftInteger
+        Name = 'USERID'
+        ParamType = ptInput
+      end>
     ProviderName = 'dspCaptura'
     RemoteServer = dspGlobal
     Left = 24
@@ -286,8 +232,6 @@ object dmGlobal: TdmGlobal
     CommunicationProtocol = 'tcp/ip'
     ChannelName = 'Proceso'
     ManagerId = '402504.733561.579534'
-    UserName = 'promaharin'
-    Password = 'auofdsbcs'
     Left = 88
     Top = 112
   end
@@ -304,5 +248,19 @@ object dmGlobal: TdmGlobal
     RemoteServer = dspAlmacen
     Left = 232
     Top = 112
+  end
+  object dspEtapa: TDSProviderConnection
+    ServerClassName = 'TsmEtapa'
+    SQLConnection = cntData
+    Left = 160
+    Top = 160
+  end
+  object cdsEtapa: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspMaster'
+    RemoteServer = dspEtapa
+    Left = 232
+    Top = 160
   end
 end

@@ -11,7 +11,8 @@ uses
   cxDataControllerConditionalFormattingRulesManagerDialog, Data.DB, cxDBData,
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, cxCheckBox, cxImageComboBox, System.ImageList,
-  Vcl.ImgList, cxImageList, cxDBLookupComboBox, Vcl.Grids, Vcl.DBGrids;
+  Vcl.ImgList, cxImageList, cxDBLookupComboBox, Vcl.Grids, Vcl.DBGrids,
+  cxProgressBar;
 
 type
   TfrmMain = class(TForm)
@@ -23,36 +24,40 @@ type
     mnuChange: TdxNavBarItem;
     mnuUsers: TdxNavBarItem;
     StatusBar: TdxStatusBar;
-    navCaptura: TdxNavBarGroup;
-    mnuCaptura: TdxNavBarItem;
-    cxGrid1DBTableView1: TcxGridDBTableView;
-    cxGrid1Level1: TcxGridLevel;
-    cxGrid1: TcxGrid;
-    dsPasos: TDataSource;
-    cxGrid1DBTableView1FECHA: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO1: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO2: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO3: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO4: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO5: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO6: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO7: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO8: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO9: TcxGridDBColumn;
-    cxGrid1DBTableView1PASO10: TcxGridDBColumn;
-    cxGrid1DBTableView1STATUS: TcxGridDBColumn;
+    navCatalogs: TdxNavBarGroup;
+    mnuEtapa: TdxNavBarItem;
+    grdCapturaTableView: TcxGridDBTableView;
+    grdCapturaLevel1: TcxGridLevel;
+    grdCaptura: TcxGrid;
+    dsCaptura: TDataSource;
+    grdCapturaTableViewFECHA: TcxGridDBColumn;
     imgList: TcxImageList;
     mnuAlmacen: TdxNavBarItem;
-    cxGrid1DBTableView1IDCAPTURA: TcxGridDBColumn;
-    cxGrid1DBTableView1IDALMACEN: TcxGridDBColumn;
+    grdCapturaTableViewFOLIO: TcxGridDBColumn;
+    grdCapturaTableViewIDALMACEN: TcxGridDBColumn;
     dsAlmacen: TDataSource;
+    grdCapturaTableViewETAPA: TcxGridDBColumn;
+    dsEtapa: TDataSource;
+    grdCapturaTableViewAVANCE: TcxGridDBColumn;
+    StyleRepository: TcxStyleRepository;
+    GridTableViewStyleSheetDevExpress: TcxGridTableViewStyleSheet;
+    stlViejas: TcxStyle;
+    navConsults: TdxNavBarGroup;
+    mnuCapturaConsult: TdxNavBarItem;
     procedure tabMainCanCloseEx(Sender: TObject; ATabIndex: Integer;
       var ACanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
+    procedure grdCapturaTableViewCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
+    procedure grdCapturaTableViewStylesGetContentStyle(
+      Sender: TcxCustomGridTableView; ARecord: TcxCustomGridRecord;
+      AItem: TcxCustomGridTableItem; var AStyle: TcxStyle);
   public
     function OpenForm(FormName: string): TForm;
+    function OpenModalForm(FormName: string): TForm;
   end;
 
 var
@@ -86,6 +91,40 @@ begin
   tabMain.ActivePage.Name := FormName;
 end;
 
+function TfrmMain.OpenModalForm(FormName: string): TForm;
+var
+  FormClass: TFormClass;
+begin
+  Result:= TForm(Application.FindComponent(FormName));
+  if Assigned(Result) then
+    Result.ShowModal
+  else
+  begin
+    FormClass:= TFormClass(GetClass('T' + FormName));
+    if Assigned(FormClass) then
+    begin
+      Result:= FormClass.Create(Application);
+      Result.ShowModal;
+    end;
+  end;
+end;
+
+procedure TfrmMain.grdCapturaTableViewCellDblClick(
+  Sender: TcxCustomGridTableView; ACellViewInfo: TcxGridTableDataCellViewInfo;
+  AButton: TMouseButton; AShift: TShiftState; var AHandled: Boolean);
+begin
+  if not dmGlobal.EsFinal then
+    dmGlobal.actCaptura.Execute;
+end;
+
+procedure TfrmMain.grdCapturaTableViewStylesGetContentStyle(
+  Sender: TcxCustomGridTableView; ARecord: TcxCustomGridRecord;
+  AItem: TcxCustomGridTableItem; var AStyle: TcxStyle);
+begin
+  if ARecord.Values[grdCapturaTableViewFECHA.Index] < (Date - 30) then
+    AStyle:= stlViejas;
+end;
+
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   Caption:= Application.Version['FileDescription'] + ' ' +
@@ -103,6 +142,8 @@ end;
 
 procedure TfrmMain.FormShow(Sender: TObject);
 begin
+  (grdCapturaTableViewAVANCE.Properties as TcxProgressBarProperties).Max:=
+    dmGlobal.Etapas;
   StatusBar.Panels.Items[0].Text:= 'Usuario: ' + dmGlobal.UserName;
 end;
 

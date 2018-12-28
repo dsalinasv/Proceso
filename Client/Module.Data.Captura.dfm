@@ -1,34 +1,54 @@
 inherited dmCaptura: TdmCaptura
   inherited dspMaster: TDSProviderConnection
     ServerClassName = 'TsmCaptura'
-    Connected = True
     SQLConnection = dmGlobal.cntData
   end
   inherited cdsMaster: TClientDataSet
     Params = <
       item
-        DataType = ftString
-        Name = 'IDCAPTURA'
+        DataType = ftUnknown
+        Name = 'FOLIO'
         ParamType = ptInput
-        Size = 38
       end>
   end
-  inherited cdsConsult: TClientDataSet
+  object cdsDocs: TClientDataSet
+    Aggregates = <>
     Params = <
       item
-        DataType = ftTimeStamp
-        Name = 'INI'
+        DataType = ftString
+        Name = 'FOLIO'
         ParamType = ptInput
+        Size = 10
       end
       item
-        DataType = ftTimeStamp
-        Name = 'FIN'
+        DataType = ftInteger
+        Name = 'ETAPA'
         ParamType = ptInput
       end>
-  end
-  inherited frxConsult: TfrxReport
-    Datasets = <>
-    Variables = <>
-    Style = <>
+    ProviderName = 'dspDocs'
+    RemoteServer = dspMaster
+    AfterInsert = cdsDocsAfterInsert
+    Left = 88
+    Top = 64
+    object cdsDocsIDCAPTURA: TStringField
+      FieldName = 'IDCAPTURA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 38
+    end
+    object cdsDocsFOLIO: TStringField
+      FieldName = 'FOLIO'
+      Size = 10
+    end
+    object cdsDocsETAPA: TIntegerField
+      FieldName = 'ETAPA'
+    end
+    object cdsDocsNAME: TStringField
+      FieldName = 'NAME'
+      Size = 50
+    end
+    object cdsDocsDOC: TBlobField
+      FieldName = 'DOC'
+    end
   end
 end

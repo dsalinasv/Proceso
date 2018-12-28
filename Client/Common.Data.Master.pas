@@ -70,7 +70,6 @@ begin
   cds:= (DataSet as TClientDataSet);
   if not Assigned(cds.DataSetField) then
     cds.ApplyUpdates(0);
-  dmGlobal.Broadcast;
 end;
 
 procedure TdmMaster.cdsNewRecord(DataSet: TDataSet);

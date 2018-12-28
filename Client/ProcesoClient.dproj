@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>ProcesoClient.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -171,6 +171,24 @@
         </DCCReference>
         <DCCReference Include="Catalog.Form.Almacen.pas">
             <Form>frmAlmacen</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Catalog.Data.Etapa.pas">
+            <Form>dmEtapa</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Catalog.Form.Etapa.pas">
+            <Form>frmEtapa</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Consult.Data.Captura.pas">
+            <Form>dmCapturaConsult</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Consult.Form.Captura.pas">
+            <Form>frmCapturaConsult</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">

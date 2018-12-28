@@ -1,34 +1,42 @@
 inherited smCaptura: TsmCaptura
+  OldCreateOrder = True
   inherited qryMaster: TFDQuery
     UpdateOptions.UpdateTableName = 'CAPTURA'
     SQL.Strings = (
       'select * from CAPTURA'
-      'where IDCAPTURA = :IDCAPTURA')
+      'where FOLIO = :FOLIO')
     ParamData = <
       item
-        Name = 'IDCAPTURA'
-        DataType = ftString
+        Name = 'FOLIO'
         ParamType = ptInput
-        Size = 38
-        Value = Null
       end>
   end
-  inherited qryConsult: TFDQuery
+  object qryDocs: TFDQuery
+    Connection = smContainer.FDConnection
+    UpdateOptions.UpdateTableName = 'DOCS'
     SQL.Strings = (
-      'select IDCAPTURA, FECHA from CAPTURA'
-      'where FECHA >= :ini and FECHA < :fin'
-      'order by FECHA')
+      'select * from DOCS'
+      'where FOLIO = :FOLIO and ETAPA = :ETAPA')
+    Left = 96
+    Top = 8
     ParamData = <
       item
-        Name = 'INI'
-        DataType = ftTimeStamp
+        Name = 'FOLIO'
+        DataType = ftString
         ParamType = ptInput
+        Size = 10
         Value = Null
       end
       item
-        Name = 'FIN'
-        DataType = ftTimeStamp
+        Name = 'ETAPA'
+        DataType = ftInteger
         ParamType = ptInput
       end>
+  end
+  object dspDocs: TDataSetProvider
+    DataSet = qryDocs
+    UpdateMode = upWhereKeyOnly
+    Left = 96
+    Top = 56
   end
 end

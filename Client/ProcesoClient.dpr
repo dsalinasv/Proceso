@@ -21,7 +21,11 @@ uses
   Module.Form.Captura in 'Module.Form.Captura.pas' {frmCaptura},
   Module.Data.Captura in 'Module.Data.Captura.pas' {dmCaptura: TDataModule},
   Catalog.Data.Almacen in 'Catalog.Data.Almacen.pas' {dmAlmacen: TDataModule},
-  Catalog.Form.Almacen in 'Catalog.Form.Almacen.pas' {frmAlmacen};
+  Catalog.Form.Almacen in 'Catalog.Form.Almacen.pas' {frmAlmacen},
+  Catalog.Data.Etapa in 'Catalog.Data.Etapa.pas' {dmEtapa: TDataModule},
+  Catalog.Form.Etapa in 'Catalog.Form.Etapa.pas' {frmEtapa},
+  Consult.Data.Captura in 'Consult.Data.Captura.pas' {dmCapturaConsult: TDataModule},
+  Consult.Form.Captura in 'Consult.Form.Captura.pas' {frmCapturaConsult};
 
 {$R *.res}
 

@@ -27,7 +27,7 @@ object frmMain: TfrmMain
     Width = 145
     Height = 541
     Align = alLeft
-    ActiveGroupIndex = 1
+    ActiveGroupIndex = 2
     TabOrder = 0
     View = 14
     OptionsBehavior.Common.AllowSelectLinks = True
@@ -35,8 +35,8 @@ object frmMain: TfrmMain
     OptionsBehavior.NavigationPane.AllowCustomizing = False
     OptionsView.ExplorerBar.ShowSpecialGroup = True
     OptionsView.NavigationPane.ShowActiveGroupCaptionWhenCollapsed = True
-    object navCaptura: TdxNavBarGroup
-      Caption = 'Capturas'
+    object navCatalogs: TdxNavBarGroup
+      Caption = 'Cat'#225'logos'
       SelectedLinkIndex = -1
       TopVisibleLinkIndex = 0
       Links = <
@@ -44,7 +44,16 @@ object frmMain: TfrmMain
           Item = mnuAlmacen
         end
         item
-          Item = mnuCaptura
+          Item = mnuEtapa
+        end>
+    end
+    object navConsults: TdxNavBarGroup
+      Caption = 'Consultas'
+      SelectedLinkIndex = -1
+      TopVisibleLinkIndex = 0
+      Links = <
+        item
+          Item = mnuCapturaConsult
         end>
     end
     object navSecurity: TdxNavBarGroup
@@ -71,11 +80,14 @@ object frmMain: TfrmMain
     object mnuUsers: TdxNavBarItem
       Action = dmGlobal.actUsers
     end
-    object mnuCaptura: TdxNavBarItem
-      Action = dmGlobal.actCaptura
+    object mnuEtapa: TdxNavBarItem
+      Action = dmGlobal.actEtapa
     end
     object mnuAlmacen: TdxNavBarItem
       Action = dmGlobal.actAlmacen
+    end
+    object mnuCapturaConsult: TdxNavBarItem
+      Action = dmGlobal.actCapturaConsult
     end
   end
   object tabMain: TcxPageControl
@@ -89,8 +101,6 @@ object frmMain: TfrmMain
     Properties.CloseButtonMode = cbmEveryTab
     Properties.CustomButtons.Buttons = <>
     OnCanCloseEx = tabMainCanCloseEx
-    ExplicitLeft = 233
-    ExplicitWidth = 551
     ClientRectBottom = 539
     ClientRectLeft = 2
     ClientRectRight = 637
@@ -98,16 +108,14 @@ object frmMain: TfrmMain
     object tabInicio: TcxTabSheet
       Caption = 'Inicio'
       ImageIndex = 0
-      ExplicitWidth = 547
-      object cxGrid1: TcxGrid
+      object grdCaptura: TcxGrid
         Left = 0
         Top = 0
         Width = 635
         Height = 511
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 547
-        object cxGrid1DBTableView1: TcxGridDBTableView
+        object grdCapturaTableView: TcxGridDBTableView
           Navigator.Buttons.CustomButtons = <>
           Navigator.Buttons.First.Enabled = False
           Navigator.Buttons.First.Visible = False
@@ -139,7 +147,8 @@ object frmMain: TfrmMain
           Navigator.Buttons.Filter.Enabled = False
           Navigator.Buttons.Filter.Visible = False
           Navigator.Visible = True
-          DataController.DataSource = dsPasos
+          OnCellDblClick = grdCapturaTableViewCellDblClick
+          DataController.DataSource = dsCaptura
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
@@ -147,115 +156,57 @@ object frmMain: TfrmMain
           OptionsData.DeletingConfirmation = False
           OptionsData.Editing = False
           OptionsData.Inserting = False
+          OptionsSelection.CellSelect = False
+          OptionsSelection.MultiSelect = True
           OptionsView.GroupByBox = False
-          object cxGrid1DBTableView1IDCAPTURA: TcxGridDBColumn
+          Styles.OnGetContentStyle = grdCapturaTableViewStylesGetContentStyle
+          object grdCapturaTableViewFOLIO: TcxGridDBColumn
             Caption = 'Folio'
-            DataBinding.FieldName = 'IDCAPTURA'
+            DataBinding.FieldName = 'FOLIO'
             Width = 50
           end
-          object cxGrid1DBTableView1IDALMACEN: TcxGridDBColumn
+          object grdCapturaTableViewIDALMACEN: TcxGridDBColumn
             Caption = 'Almacen'
             DataBinding.FieldName = 'IDALMACEN'
             PropertiesClassName = 'TcxLookupComboBoxProperties'
             Properties.KeyFieldNames = 'CODE'
             Properties.ListColumns = <
               item
-                FieldName = 'NAME'
+                FieldName = 'DESCRIPCION'
               end>
             Properties.ListSource = dsAlmacen
             Width = 200
           end
-          object cxGrid1DBTableView1FECHA: TcxGridDBColumn
+          object grdCapturaTableViewFECHA: TcxGridDBColumn
             Caption = 'Fecha'
             DataBinding.FieldName = 'FECHA'
+            Width = 80
           end
-          object cxGrid1DBTableView1PASO1: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO1'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO2: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO2'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO3: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO3'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO4: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO4'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO5: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO5'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO6: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO6'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO7: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO7'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO8: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO8'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO9: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO9'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1PASO10: TcxGridDBColumn
-            DataBinding.FieldName = 'PASO10'
-            PropertiesClassName = 'TcxCheckBoxProperties'
-            Properties.ValueChecked = 1
-            Properties.ValueUnchecked = 0
-          end
-          object cxGrid1DBTableView1STATUS: TcxGridDBColumn
-            Caption = 'Estado'
-            DataBinding.FieldName = 'STATUS'
-            PropertiesClassName = 'TcxImageComboBoxProperties'
-            Properties.Images = imgList
-            Properties.Items = <
+          object grdCapturaTableViewETAPA: TcxGridDBColumn
+            Caption = 'Etapa'
+            DataBinding.FieldName = 'ETAPA'
+            PropertiesClassName = 'TcxLookupComboBoxProperties'
+            Properties.KeyFieldNames = 'IDETAPA'
+            Properties.ListColumns = <
               item
-                ImageIndex = 0
-                Value = 0
-              end
-              item
-                ImageIndex = 1
-                Value = 1
-              end
-              item
-                ImageIndex = 2
-                Value = 2
-              end
-              item
-                ImageIndex = 3
-                Value = 3
+                FieldName = 'DESCRIPCION'
               end>
-            Properties.LargeImages = imgList
+            Properties.ListSource = dsEtapa
+            Width = 100
+          end
+          object grdCapturaTableViewAVANCE: TcxGridDBColumn
+            Caption = 'Avance'
+            DataBinding.FieldName = 'ETAPA'
+            PropertiesClassName = 'TcxProgressBarProperties'
+            Properties.BeginColor = 54056
+            Properties.Max = 10.000000000000000000
+            Properties.OverloadValue = 8.000000000000000000
+            Properties.ShowText = False
+            Width = 200
           end
         end
-        object cxGrid1Level1: TcxGridLevel
-          GridView = cxGrid1DBTableView1
+        object grdCapturaLevel1: TcxGridLevel
+          GridView = grdCapturaTableView
         end
       end
     end
@@ -281,7 +232,7 @@ object frmMain: TfrmMain
     Font.Name = 'Tahoma'
     Font.Style = []
   end
-  object dsPasos: TDataSource
+  object dsCaptura: TDataSource
     DataSet = dmGlobal.cdsCaptura
     Left = 384
     Top = 288
@@ -1470,5 +1421,24 @@ object frmMain: TfrmMain
     DataSet = dmGlobal.cdsAlmacen
     Left = 384
     Top = 336
+  end
+  object dsEtapa: TDataSource
+    DataSet = dmGlobal.cdsEtapa
+    Left = 384
+    Top = 384
+  end
+  object StyleRepository: TcxStyleRepository
+    Left = 387
+    Top = 244
+    PixelsPerInch = 96
+    object stlViejas: TcxStyle
+      AssignedValues = [svColor]
+      Color = clCream
+    end
+    object GridTableViewStyleSheetDevExpress: TcxGridTableViewStyleSheet
+      Caption = 'DevExpress'
+      Styles.Group = stlViejas
+      BuiltIn = True
+    end
   end
 end

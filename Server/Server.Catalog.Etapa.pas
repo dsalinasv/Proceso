@@ -1,4 +1,4 @@
-unit Server.Catalog.Almacen;
+unit Server.Catalog.Etapa;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   Datasnap.Provider, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
-  TsmAlmacen = class(TsmList)
+  TsmEtapa = class(TsmList)
   private
     { Private declarations }
   public

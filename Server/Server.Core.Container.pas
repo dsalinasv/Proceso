@@ -55,15 +55,19 @@ uses
   Datasnap.DSNames,
   Datasnap.DSServerResStrs,
   Server.Catalog.Almacen,
+  Server.Catalog.Etapa,
   Server.Common.Global,
   Server.Module.Captura,
+  Server.Consult.Captura,
   Server.Resource.Strings;
 
 procedure RegisterServerClasses;
 begin
   TSimpleServerClass.Create(TsmAlmacen);
+  TSimpleServerClass.Create(TsmEtapa);
   TSimpleServerClass.Create(TsmGlobal);
   TSimpleServerClass.Create(TsmCaptura);
+  TSimpleServerClass.Create(TsmCapturaConsult);
 end;
 
 procedure TsmContainer.DataModuleCreate(Sender: TObject);
@@ -80,7 +84,7 @@ procedure TsmContainer.DSAuthenticationManagerUserAuthenticate(Sender: TObject;
   const Protocol, Context, User, Password: string; var valid: Boolean;
   UserRoles: TStrings);
 begin
-  valid:= (User = 'promaharin') and (Password = 'auofdsbcs');
+  valid:= (User = 'proceso') and (Password = 'etapas');
 end;
 
 procedure TsmContainer.dscGetClass(DSServerClass: TDSServerClass;
@@ -121,7 +125,6 @@ begin
     begin
       case AProtocol of
         DSProtocol.HTTP: AServer.DSTCPServerTransport.Port := APort.ToInteger;
-          
       else
         IsPortSet := False
       end;
@@ -153,7 +156,6 @@ begin
   end
   else
     Writeln(sServerRunning);
-
   if LStart then
   begin
     Writeln(sStartingServer);
@@ -185,7 +187,6 @@ procedure  WriteStatus(const AServer: TsmContainer);
 begin
   Writeln(sActive + AServer.DSServer.Started.ToString(TUseBoolStrs.True));
   Writeln(sHTTPPort + AServer.DSTCPServerTransport.Port.ToString);
-    
   Write(cArrow);
 end;
 
@@ -252,7 +253,6 @@ begin
     dbconn := TFDConnection.Create(nil);
     dbconn.Params.Clear;
     dbconn.ConnectionDefName := 'Proceso';
-
     ListofConnection.Add(TDSSessionManager.GetThreadSession.Id, dbconn);
     Result := dbconn;
   end;

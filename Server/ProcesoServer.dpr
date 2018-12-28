@@ -11,7 +11,9 @@ uses
   Server.Common.Module in 'Server.Common.Module.pas' {smModule: TDSServerModule},
   Server.Common.List in 'Server.Common.List.pas' {smList: TDSServerModule},
   Server.Module.Captura in 'Server.Module.Captura.pas' {smCaptura: TDSServerModule},
-  Server.Catalog.Almacen in 'Server.Catalog.Almacen.pas' {smAlmacen: TDSServerModule};
+  Server.Catalog.Almacen in 'Server.Catalog.Almacen.pas' {smAlmacen: TDSServerModule},
+  Server.Catalog.Etapa in 'Server.Catalog.Etapa.pas' {smEtapa: TDSServerModule},
+  Server.Consult.Captura in 'Server.Consult.Captura.pas' {smCapturaConsult: TDSServerModule};
 
 begin
   try
